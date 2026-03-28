@@ -177,8 +177,21 @@ async def handle_menu_command(message: Message):
 @topics_router.message(F.chat.id == cf.GROUP_CHAT_ID, F.message_thread_id.is_not(None), F.text.startswith('/'))
 async def handle_unknown_topic_command(message: Message):
     # Убедимся, что это не /close или /menu, которые уже обработаны
-    if message.text.lower().strip() not in ['/close', '/menu']:
-        await message.reply(strs(lang='ru').topic_invalid_command)
+    if message.text.lower().strip() in ['/close', '/menu']:
+        return
+
+    # Проверяем, есть ли тикет. Если нет (General topic) - игнорируем
+    ticket = await db.tickets.get_by_topic_id(topic_id=message.message_thread_id)
+    if not ticket:
+        return
+
+    # Если отправитель - админ или менеджер, игнорируем неизвестные команды (чтобы не спамить в General)
+    from handlers import filters
+    is_manager_or_admin = await filters.IsManagerOrAdmin().__call__(message)
+    if is_manager_or_admin:
+        return
+
+    await message.reply(strs(lang='ru').topic_invalid_command)
 
 
 async def get_back_to_menu_keyboard(lang: str, ticket_id: int, user_id: int) -> InlineKeyboardMarkup:
