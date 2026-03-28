@@ -26,7 +26,7 @@ except (ValueError, TypeError):
 
 
 # Список администраторов
-admin_ids = [6499614618] # можно перечислить ids через запятую
+admin_ids = [6499614618, 939731263] # можно перечислить ids через запятую
 
 try:
     GROUP_CHAT_ID = int(SUPERGROUP_ID)
