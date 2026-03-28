@@ -1,0 +1,11 @@
+services:
+  topic_support_bot:
+    container_name: topic_support_bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./storage:/app/storage
