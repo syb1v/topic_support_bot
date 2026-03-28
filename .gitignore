@@ -1,0 +1,64 @@
+# ПЭРУМ - .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+*.egg-info/
+*.egg
+.installed.cfg
+
+# Виртуальное окружение
+venv/
+.venv/
+ENV/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Переменные окружения
+.env
+.env.local
+.env.*.local
+
+# База данных
+data/*.db
+*.db
+
+# Логи
+*.log
+logs/
+
+# Кеш
+.cache/
+*.pyc
+
+# Миграции Alembic (версии)
+# migrations/versions/*.py  # Раскомментировать если нужно
+
+# Uploads
+uploads/
+
+# Docker volumes
+postgres_data/
+redis_data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Тесты
+.pytest_cache/
+.coverage
+htmlcov/
