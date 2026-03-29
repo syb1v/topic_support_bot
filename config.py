@@ -11,10 +11,12 @@ project = {
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 SUPERGROUP_ID = os.getenv('SUPERGROUP_ID')
+PROXY_URL = os.getenv('PROXY_URL')
 
 
 bot = {
     'token': BOT_TOKEN,
+    'proxy': PROXY_URL,
 }
 
 # Преобразуем SUPERGROUP_ID в число, если он задан
@@ -26,7 +28,9 @@ except (ValueError, TypeError):
 
 
 # Список администраторов
-admin_ids = [6499614618, 939731263] # можно перечислить ids через запятую
+# Список администраторов
+admin_ids_str = os.getenv('ADMIN_IDS', '')
+admin_ids = [int(i.strip()) for i in admin_ids_str.split(',') if i.strip().isdigit()]
 
 try:
     GROUP_CHAT_ID = int(SUPERGROUP_ID)
