@@ -16,7 +16,7 @@ class IsUser(BaseFilter):
     async def __call__(self, message: Message) -> bool:
         user = await db.users.get_by_id(user_id=message.from_user.id)
         if not user: return True # Считаем незарегистрированного пользователем
-        return user.status == 'user' and message.from_user.id not in cf.admin_ids
+        return user.status == 'user'
 
 class IsManagerOrAdmin(BaseFilter):
     async def __call__(self, message: Message) -> bool:
@@ -27,12 +27,13 @@ class IsManagerOrAdmin(BaseFilter):
 class IsManager(BaseFilter):
     async def __call__(self, message: Message) -> bool:
         user = await db.users.get_by_id(user_id=message.from_user.id)
-        return user and user.status == 'manager' and message.from_user.id not in cf.admin_ids
+        return user and user.status == 'manager'
 
 class IsAdmin(BaseFilter):
     async def __call__(self, message: Message) -> bool:
         user = await db.users.get_by_id(user_id=message.from_user.id)
-        return user and user.status == 'admin' and message.from_user.id in cf.admin_ids
+        # Админ, если статус в БД 'admin' ИЛИ ID есть в конфиге
+        return user and (user.status == 'admin' or message.from_user.id in cf.admin_ids)
 
 # --- Фильтр активного обращения ---
 class InTicket(BaseFilter):

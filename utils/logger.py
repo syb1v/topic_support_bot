@@ -27,7 +27,7 @@ logger.remove()
 
 log_format = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <level>{message}</level>"
 
-logger.add(sys.stderr, level="ERROR", format=log_format, colorize=True)
+logger.add(sys.stderr, level="INFO", format=log_format, colorize=True)
 
 logging_folder = os.path.join(cf.BASE, 'logs')
 if not os.path.exists(logging_folder):
@@ -37,7 +37,7 @@ bot_log_path = os.path.join(logging_folder, 'bot_log.log')
 db_log_path = os.path.join(logging_folder, 'database_log.log')
 bg_log_path = os.path.join(logging_folder, 'background_log.log')
 
-logger.add(bot_log_path, level="ERROR", format=log_format, rotation="10 MB", retention="7 days", compression="zip", filter=lambda record: record["extra"].get("name") == "bot")
+logger.add(bot_log_path, level="INFO", format=log_format, rotation="10 MB", retention="7 days", compression="zip", filter=lambda record: record["extra"].get("name") == "bot")
 logger.add(db_log_path, level="ERROR", format=log_format, rotation="10 MB", retention="7 days", compression="zip", filter=lambda record: record["extra"].get("name") == "database")
 logger.add(bg_log_path, level="ERROR", format=log_format, rotation="10 MB", retention="7 days", compression="zip", filter=lambda record: record["extra"].get("name") == "background")
 
