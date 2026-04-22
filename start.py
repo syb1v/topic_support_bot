@@ -14,9 +14,12 @@ from utils.logger import bot_logger
 
 dispatcher.include_routers(*all_routers)
 
-# Определяем функции для запуска бота
 async def start_bot():
-    await bot.delete_webhook(drop_pending_updates=True)
+    try:
+        await bot.delete_webhook(drop_pending_updates=True)
+    except Exception as e:
+        bot_logger.error(f"Failed to delete webhook on start: {e}")
+        
     bot_logger.info("Starting polling...")
     await dispatcher.start_polling(
         bot,

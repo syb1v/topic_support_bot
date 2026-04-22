@@ -5,7 +5,6 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- Added `PROXY_URL` support in `.env`, `config.py`, and `bot.py` using `aiohttp-socks`.
 - Added `ADMIN_IDS` support in `.env` and `config.py` for dynamic management of administrators.
 - Added admin ID `939731263` and `6499614618` to the default administrative list.
 - New `deploy.sh` script specifically for `topic_support_bot`.
@@ -17,13 +16,15 @@ All notable changes to this project will be documented in this file.
 - Corrected `.env` parsing issue where inline comments were treated as part of the value.
 - Fixed bot conflict errors by stopping all redundant instances.
 - Fixed admin/manager button routing by simplifying `IsAdmin`, `IsManager`, and `IsUser` filters in `handlers/filters.py`.
+- Hardened `start_bot()` so a transient `delete_webhook` failure no longer prevents polling from starting.
 
 ### Changed
 - Upgraded core dependencies (`aiogram`, `aiohttp`, `pydantic`, etc.) to their latest versions.
 - Refactored `handlers/group/topics.py` to fix the "General topic" bug:
     - Bot now correctly ignores messages in topics without an associated ticket (like General).
     - Admins and Managers no longer receive "invalid command" errors when writing in General.
+- Removed proxy support (`PROXY_URL`, `aiohttp-socks`, `python-socks`); the bot connects to Telegram directly.
 
 ### Configured
-- Configured `.env` with `BOT_TOKEN`, `SUPERGROUP_ID`, `PROXY_URL`, and `ADMIN_IDS`.
+- Configured `.env` with `BOT_TOKEN`, `SUPERGROUP_ID`, and `ADMIN_IDS`.
 - Finalized `requirements.txt` with stable version pins.
