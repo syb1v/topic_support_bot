@@ -11,12 +11,10 @@ project = {
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 SUPERGROUP_ID = os.getenv('SUPERGROUP_ID')
-PROXY_URL = os.getenv('PROXY_URL')
 
 
 bot = {
     'token': BOT_TOKEN,
-    'proxy': PROXY_URL,
 }
 
 # Преобразуем SUPERGROUP_ID в число, если он задан
