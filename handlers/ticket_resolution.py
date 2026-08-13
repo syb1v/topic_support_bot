@@ -145,7 +145,7 @@ async def handle_resolution_continue(callback: CallbackQuery) -> None:
     await callback.answer()
 
 
-@resolution_router.message(Command('resolution_prompt'))
+@resolution_router.message(Command('bye'))
 async def handle_manual_resolution_prompt(message: Message) -> None:
     actor = await db.users.get_by_id(message.from_user.id)
     if not actor or actor.status not in {'manager', 'admin'}:
@@ -157,7 +157,7 @@ async def handle_manual_resolution_prompt(message: Message) -> None:
     elif message.message_thread_id:
         ticket = await db.tickets.get_by_topic_id(message.message_thread_id)
     if not ticket or ticket.close_date:
-        await message.answer('Укажите открытое обращение: /resolution_prompt <ticket_id>')
+        await message.answer('Укажите открытое обращение: /bye <ticket_id>')
         return
     if await send_resolution_prompt(message.bot, ticket):
         await message.answer(f'Предложение отправлено пользователю по обращению #{ticket.id}.')

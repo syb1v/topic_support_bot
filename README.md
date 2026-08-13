@@ -64,6 +64,10 @@ Required GitHub environment secrets для `production`:
 - `DEPLOY_SSH_KEY`
 - `DEPLOY_HOST_KEY`
 
+Менеджер или администратор может вручную отправить пользователю предложение
+закрыть обращение командой `/bye <ticket_id>` в личном чате с ботом или `/bye`
+непосредственно внутри forum topic обращения.
+
 ---
 
 ## 💻 Локальный запуск (Без Docker)
