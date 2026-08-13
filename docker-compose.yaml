@@ -1,10 +1,12 @@
 services:
   topic_support_bot:
     container_name: topic_support_bot
+    image: ${TOPIC_SUPPORT_BOT_IMAGE:-topic-support-bot:local}
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
+    init: true
     env_file:
       - .env
     volumes:

@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Added an automatic one-hour inactivity prompt with inline actions to close or continue a ticket.
+- Added `/resolution_prompt <ticket_id>` for managers/admins and topic-context execution without an ID.
+- Added immutable GHCR build and SSH production deployment through GitHub Actions.
 - Added `ADMIN_IDS` support in `.env` and `config.py` for dynamic management of administrators.
 - Added admin ID `939731263` and `6499614618` to the default administrative list.
 - New `deploy.sh` script specifically for `topic_support_bot`.
@@ -19,6 +22,7 @@ All notable changes to this project will be documented in this file.
 - Hardened `start_bot()` so a transient `delete_webhook` failure no longer prevents polling from starting.
 
 ### Changed
+- Removed the active-ticket reply keyboard; users now chat without a persistent close button.
 - Upgraded core dependencies (`aiogram`, `aiohttp`, `pydantic`, etc.) to their latest versions.
 - Refactored `handlers/group/topics.py` to fix the "General topic" bug:
     - Bot now correctly ignores messages in topics without an associated ticket (like General).

@@ -7,7 +7,7 @@ from json import loads
 import os
 
 # Third-party
-from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
@@ -20,6 +20,7 @@ from bot import bot
 from aiogram.exceptions import TelegramAPIError
 from handlers.private.admins.working_hours import is_working_time
 from handlers import filters
+from handlers.ticket_resolution import record_user_activity
 
 
 # __router__ !DO NOT DELETE!
@@ -34,10 +35,6 @@ class CreateTicketStates(StatesGroup):
 
 
 # async def get_skip_contact_keyboard(lang: str) -> ReplyKeyboardMarkup: # ФУНКЦИЯ УДАЛЕНА
-
-async def get_active_request_reply_keyboard(lang: str) -> ReplyKeyboardMarkup:
-    button_list = [[KeyboardButton(text=strs(lang).end_conversation_btn)]]
-    return ReplyKeyboardMarkup(keyboard=button_list, resize_keyboard=True, one_time_keyboard=False)
 
 @ticket_router.message(filters.Private(), filters.IsUser(), ((F.text == '/create_ticket') | (F.text.in_(create_ticket_btn))), filters.IsRestricted())
 async def handle_create_ticket_command(message: Message, state: FSMContext):
@@ -55,7 +52,7 @@ async def handle_create_ticket_command(message: Message, state: FSMContext):
     ticket = await db.tickets.get_by_topic_id(topic_id=current_topic_id)
     if ticket and not ticket.close_date:
         await message.answer(text=strs(lang=lang).ticket_opened_already)
-        await message.answer("Вы можете продолжить диалог или завершить текущее обращение.", reply_markup=await get_active_request_reply_keyboard(lang=lang))
+        await message.answer("Вы можете продолжить диалог в этом чате.", reply_markup=ReplyKeyboardRemove())
     else:
         if user:
             user.current_ticket_id = None
@@ -78,7 +75,7 @@ async def handle_faq_create_ticket_callback(callback: CallbackQuery, state: FSMC
             await callback.answer(strs(lang=lang).ticket_opened_already, show_alert=True)
             try:
                 await callback.message.delete()
-                await callback.message.answer("Вы можете продолжить диалог или завершить текущее обращение.", reply_markup=await get_active_request_reply_keyboard(lang=lang))
+                await callback.message.answer("Вы можете продолжить диалог в этом чате.", reply_markup=ReplyKeyboardRemove())
             except Exception as e:
                 bot_logger.warning(f"Could not delete/reply on faq_create_ticket: {e}")
             return
@@ -130,6 +127,7 @@ async def handle_get_first_message_state(message: Message, state: FSMContext):
         tg_url=user.url_name or "",
         open_date=current_time,
         last_modified=current_time,
+        last_user_activity=current_time,
         content=[]
     )
     ticket_id_saved = None
@@ -220,7 +218,7 @@ async def handle_get_first_message_state(message: Message, state: FSMContext):
         if not is_working:
             final_message_text += "\n\n" + strs(lang).non_working_hours_notice
 
-        await message.answer(text=final_message_text, reply_markup=await get_active_request_reply_keyboard(lang=lang), reply_to_message_id=None)
+        await message.answer(text=final_message_text, reply_markup=ReplyKeyboardRemove(), reply_to_message_id=None)
         await state.clear()
 
     except Exception as e:
@@ -300,6 +298,9 @@ async def handle_user_ticket_message(message: Message, state: FSMContext):
             await db.users.update(user=user)
         await message.answer(strs(lang=lang).ticket_already_closed, reply_markup=await get_main_menu(lang=lang, user_id=message.chat.id))
         return
+
+    await record_user_activity(message.bot, ticket)
+    ticket = await db.tickets.get_by_id(ticket.id)
 
     reply_to_topic_message_id = None
     if message.reply_to_message:

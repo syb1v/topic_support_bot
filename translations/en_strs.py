@@ -55,6 +55,10 @@ class EnTranslation:
     choose_lang_btn = 'Рус 🇷🇺'
     faq_not_found_btn = 'Did not find the answer?'
     admin_take_over_btn = 'Take over dialog 👑'
+    ticket_resolution_close_btn = 'Yes, resolved ✅'
+    ticket_resolution_continue_btn = 'No, I need help 💬'
+    ticket_resolution_prompt = 'Has your issue been resolved? If yes, close the ticket. If not, continue the conversation.'
+    ticket_resolution_continue_message = 'The ticket remains open. Please tell us what else you need help with.'
 
     # Topic menu buttons
     topic_user_info_button = 'ℹ️ User Info'

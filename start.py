@@ -57,6 +57,13 @@ async def main():
     )
 
     scheduler.add_job(
+        back.resolution_prompt_check,
+        trigger='interval',
+        minutes=1,
+        id='resolution_prompt_check_job'
+    )
+
+    scheduler.add_job(
         back.notify_delete,
         trigger=CronTrigger(day=1, hour=10, minute=0), # Раз в месяц, 1-го числа в 10:00
         id='notify_delete_job'

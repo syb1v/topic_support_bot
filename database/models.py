@@ -44,6 +44,9 @@ class TicketModel(Base):
     tg_url = Column(String, nullable=True)
     open_date = Column(DateTime)
     last_modified = Column(DateTime)
+    last_user_activity = Column(DateTime, default=None, nullable=True)
+    resolution_prompt_sent_at = Column(DateTime, default=None, nullable=True)
+    resolution_prompt_message_id = Column(Integer, default=None, nullable=True)
     close_date = Column(DateTime, default=None, nullable=True)
     content = Column(PickleType, default=[])
 

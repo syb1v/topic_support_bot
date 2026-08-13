@@ -49,6 +49,23 @@
 
 ---
 
+## Автоматический production deploy
+
+Workflow `.github/workflows/deploy.yml` проверяет Python imports, публикует
+immutable image `ghcr.io/<owner>/topic-support-bot:<commit-sha>` и обновляет
+production по SSH. Production `.env` и `storage/` остаются только на сервере.
+
+Required GitHub environment secrets для `production`:
+
+- `DEPLOY_HOST`
+- `DEPLOY_PORT`
+- `DEPLOY_USER`
+- `DEPLOY_PATH`
+- `DEPLOY_SSH_KEY`
+- `DEPLOY_HOST_KEY`
+
+---
+
 ## 💻 Локальный запуск (Без Docker)
 
 Для локального запуска вам понадобится установленный **Python 3.11** или выше.
