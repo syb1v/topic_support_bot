@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Added an automatic one-hour inactivity prompt with inline actions to close or continue a ticket.
-- Added `/resolution_prompt <ticket_id>` for managers/admins and topic-context execution without an ID.
+- Added `/bye <ticket_id>` for managers/admins and topic-context execution without an ID.
 - Added immutable GHCR build and SSH production deployment through GitHub Actions.
 - Added `ADMIN_IDS` support in `.env` and `config.py` for dynamic management of administrators.
 - Added admin ID `939731263` and `6499614618` to the default administrative list.
