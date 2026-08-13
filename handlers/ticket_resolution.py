@@ -150,7 +150,14 @@ async def handle_manual_resolution_prompt(message: Message) -> None:
     actor = await db.users.get_by_id(message.from_user.id)
     is_configured_admin = message.from_user.id in cf.admin_ids
     has_staff_role = actor is not None and actor.status in {'manager', 'admin'}
-    if not is_configured_admin and not has_staff_role:
+    is_group_admin = False
+    if message.chat.id == cf.GROUP_CHAT_ID:
+        try:
+            member = await message.bot.get_chat_member(cf.GROUP_CHAT_ID, message.from_user.id)
+            is_group_admin = member.status in {'administrator', 'creator'}
+        except TelegramAPIError:
+            pass
+    if not is_configured_admin and not has_staff_role and not is_group_admin:
         await message.answer('Команда доступна только менеджерам и администраторам.')
         return
     if message.chat.type != 'private' and message.chat.id != cf.GROUP_CHAT_ID:
