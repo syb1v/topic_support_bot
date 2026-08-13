@@ -5,9 +5,10 @@ from .background import check_mute
 from .private import user_router, manager_router, admin_router
 from .private import unknown_cmd
 from .group import group_router
+from .ticket_resolution import resolution_router
 
 all_routers = [
-    group_router,
+    resolution_router, group_router,
     user_router, manager_router, admin_router,
     unknown_cmd.unk_router
 ]

@@ -34,6 +34,7 @@ class Database:
                 self.session_maker = sessionmaker(bind=self.engine)
                 # Creating tables defined in 'Base' metadata
                 Base.metadata.create_all(self.engine)
+                self.__upgrade_schema__()
 
                 # __connect_inner_classes__ !DO NOT DELETE!
 
@@ -47,6 +48,22 @@ class Database:
                 # Handling database connection errors
                 database_logger.error('Database error:\n' + traceback.format_exc())
                 sleep(5.0)
+
+    def __upgrade_schema__(self):
+        """Apply additive SQLite schema changes for installations without Alembic."""
+        ticket_columns = {column['name'] for column in inspect(self.engine).get_columns('Tickets')}
+        missing_columns = {
+            'last_user_activity': 'DATETIME',
+            'resolution_prompt_sent_at': 'DATETIME',
+            'resolution_prompt_message_id': 'INTEGER',
+        }
+        with self.engine.begin() as connection:
+            for column_name, column_type in missing_columns.items():
+                if column_name not in ticket_columns:
+                    connection.execute(text(
+                        f'ALTER TABLE "Tickets" ADD COLUMN "{column_name}" {column_type}'
+                    ))
+                    database_logger.info(f'Added Tickets.{column_name} column')
 
     # Constructor to initialize the Database class
     def __init__(self, type_: Type):
@@ -443,6 +460,9 @@ class Database:
                     'open_date': ticket.open_date,
                     'close_date': ticket.close_date,
                     'last_modified': ticket.last_modified,
+                    'last_user_activity': ticket.last_user_activity,
+                    'resolution_prompt_sent_at': ticket.resolution_prompt_sent_at,
+                    'resolution_prompt_message_id': ticket.resolution_prompt_message_id,
                     'content': ticket.content
                 })
                 session.commit()

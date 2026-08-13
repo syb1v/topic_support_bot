@@ -55,6 +55,10 @@ class RuTranslation:
     choose_lang_btn = 'Eng 🇺🇸'
     faq_not_found_btn = 'Не нашли нужный ответ?'
     admin_take_over_btn = 'Перехватить диалог 👑'
+    ticket_resolution_close_btn = 'Да, вопрос решён ✅'
+    ticket_resolution_continue_btn = 'Нет, нужна помощь 💬'
+    ticket_resolution_prompt = 'Удалось решить ваш вопрос? Если да — закройте обращение. Если нет — продолжите диалог.'
+    ticket_resolution_continue_message = 'Хорошо, обращение остаётся открытым. Напишите, пожалуйста, что ещё нужно уточнить.'
 
     # Кнопки меню топика
     topic_user_info_button = 'ℹ️ Инфо о пользователе'
