@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - New `update.sh` script for automated code refreshment.
 
 ### Fixed
+- Registered Telegram slash-command hints, added `/menu`, and made `/bye` work in the configured support forum topic or staff private chat.
 - Fixed `ImportError` by upgrading `yarl` and `aiosignal`.
 - Resolved "silent bot" issue in terminal by changing log level from `ERROR` to `INFO` in `utils/logger.py`.
 - Corrected `.env` parsing issue where inline comments were treated as part of the value.

@@ -125,7 +125,7 @@ async def handle_start_command(message: Message, state: FSMContext):
          await message.answer(text=strs(lang=user_lang).general_start, reply_markup=keyboard)
 
 
-@general_router.message(Command('help'), filters.Private())
+@general_router.message(Command('help', 'menu'), filters.Private())
 async def handle_help_command(message: Message, state: FSMContext):
     bot_logger.info(f'Handling command /help from user {message.chat.id}')
     await state.clear()
