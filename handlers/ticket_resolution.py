@@ -148,7 +148,13 @@ async def handle_resolution_continue(callback: CallbackQuery) -> None:
 @resolution_router.message(Command('bye'))
 async def handle_manual_resolution_prompt(message: Message) -> None:
     actor = await db.users.get_by_id(message.from_user.id)
-    if not actor or actor.status not in {'manager', 'admin'}:
+    is_configured_admin = message.from_user.id in cf.admin_ids
+    has_staff_role = actor is not None and actor.status in {'manager', 'admin'}
+    if not is_configured_admin and not has_staff_role:
+        await message.answer('Команда доступна только менеджерам и администраторам.')
+        return
+    if message.chat.type != 'private' and message.chat.id != cf.GROUP_CHAT_ID:
+        await message.answer('Команда /bye работает только в группе поддержки или в личном чате с ботом.')
         return
     command_parts = (message.text or '').split(maxsplit=1)
     ticket = None
