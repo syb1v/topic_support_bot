@@ -53,9 +53,15 @@
 
 Workflow `.github/workflows/deploy.yml` проверяет Python imports, публикует
 immutable image `ghcr.io/<owner>/topic-support-bot:<commit-sha>` и обновляет
-production по SSH. Production `.env` и `storage/` остаются только на сервере.
+окружения по SSH. `.env` и `storage/` остаются только на серверах.
 
-Required GitHub environment secrets для `production`:
+Workflow деплоит один и тот же образ в два GitHub environment:
+
+- `production` — текущий production-сервер бота.
+- `flytopay` — прод-сервер Flytopay: бот `@flytopay_support_bot`, менеджеры
+  работают в форум-группе «Flytopay | Поддержка».
+
+Required GitHub environment secrets для каждого environment:
 
 - `DEPLOY_HOST`
 - `DEPLOY_PORT`

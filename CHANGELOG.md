@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Added a `flytopay` GitHub environment and a second deploy target: the same image now also deploys to the Flytopay production server (`@flytopay_support_bot`, `/opt/topic_support_bot`).
 - Added an automatic one-hour inactivity prompt with inline actions to close or continue a ticket.
 - Added `/bye <ticket_id>` for managers/admins and topic-context execution without an ID.
 - Added immutable GHCR build and SSH production deployment through GitHub Actions.

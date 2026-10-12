@@ -54,7 +54,11 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment: production
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [production, flytopay]
+    environment: ${{ matrix.environment }}
     steps:
       - name: Configure SSH
         env:
