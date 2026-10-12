@@ -2,6 +2,7 @@ from . import *
 from utils.logger import bot_logger
 
 # Standard
+import asyncio
 from datetime import datetime, timezone, timedelta
 from json import loads
 import os
@@ -25,6 +26,20 @@ from handlers.ticket_resolution import record_user_activity
 
 # __router__ !DO NOT DELETE!
 ticket_router = Router()
+
+
+# __locks__ !DO NOT DELETE!
+# Блокировки создания тикета по пользователю: защита от параллельной обработки
+# сообщений одного альбома (media group), из-за которой создавалось несколько топиков.
+_ticket_creation_locks: dict[int, asyncio.Lock] = {}
+
+
+def get_ticket_creation_lock(user_id: int) -> asyncio.Lock:
+    lock = _ticket_creation_locks.get(user_id)
+    if lock is None:
+        lock = asyncio.Lock()
+        _ticket_creation_locks[user_id] = lock
+    return lock
 
 
 # __states__ !DO NOT DELETE!
@@ -99,8 +114,30 @@ async def handle_faq_create_ticket_callback(callback: CallbackQuery, state: FSMC
 async def handle_get_first_message_state(message: Message, state: FSMContext):
     bot_logger.info(f'Handling states CreateTicketStates.get_first_message from user {message.chat.id}')
     lang = (await state.get_data()).get('lang', 'ru')
-    user = await db.users.get_by_id(user_id=message.chat.id)
 
+    # Блокируем создание тикета для пользователя: сообщения одного альбома
+    # обрабатываются параллельно и без блокировки создают отдельный топик на каждое фото.
+    lock = get_ticket_creation_lock(message.chat.id)
+    async with lock:
+        user = await db.users.get_by_id(user_id=message.chat.id)
+        active_ticket = None
+        if user and user.current_topic_id:
+            existing_ticket = await db.tickets.get_by_topic_id(topic_id=user.current_topic_id)
+            if existing_ticket and not existing_ticket.close_date:
+                active_ticket = existing_ticket
+
+        if active_ticket:
+            bot_logger.info(
+                f'User {message.chat.id} already has active Ticket {active_ticket.id}. '
+                f'Forwarding message to Topic {active_ticket.topic_id} instead of creating a duplicate.'
+            )
+            await forward_message_to_topic(message, user, active_ticket)
+            return
+
+        await create_ticket_from_first_message(message, state, lang, user)
+
+
+async def create_ticket_from_first_message(message: Message, state: FSMContext, lang: str, user):
     if not user: # Доп. проверка, хотя middleware должен обеспечивать наличие пользователя
         await message.answer("Произошла ошибка. Пользователь не найден. Пожалуйста, начните сначала командой /start.", reply_markup=ReplyKeyboardRemove())
         await state.clear()
@@ -299,6 +336,11 @@ async def handle_user_ticket_message(message: Message, state: FSMContext):
         await message.answer(strs(lang=lang).ticket_already_closed, reply_markup=await get_main_menu(lang=lang, user_id=message.chat.id))
         return
 
+    await forward_message_to_topic(message, user, ticket)
+
+
+async def forward_message_to_topic(message: Message, user, ticket: TicketModel):
+    """Копирует сообщение пользователя в топик тикета и сохраняет его в истории."""
     await record_user_activity(message.bot, ticket)
     ticket = await db.tickets.get_by_id(ticket.id)
 
