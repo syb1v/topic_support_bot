@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - Added `/bye <ticket_id>` for managers/admins and topic-context execution without an ID.
 - Added immutable GHCR build and SSH production deployment through GitHub Actions.
 - Added `ADMIN_IDS` support in `.env` and `config.py` for dynamic management of administrators.
-- Added admin ID `444444444` and `222222222` to the default administrative list.
+- Added initial default administrator IDs for the first deployment.
 - New `deploy.sh` script specifically for `topic_support_bot`.
 - New `update.sh` script for automated code refreshment.
 

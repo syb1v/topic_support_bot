@@ -62,3 +62,6 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Агентские локальные файлы
+.claude/
